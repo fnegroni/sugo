@@ -1,6 +1,7 @@
 #!/bin/bash
 
 pdir=$(dirname $0)
+installdir=/usr/local
 
 # Basic sanity check: are we invoked from the source directory?
 if [[ -z $pdir || $pdir == "." ]]
