@@ -1,0 +1,18 @@
+`sugo` - a system software test framework
+=========================================
+
+`sugo` is a framework to aid the development of unit and behaviour tests for system software libraries and applications.
+
+It is written in C99 for Linux 2.6 and above.
+
+It is not intented to be ported to any other operating system.
+
+Purpose
+-------
+
+Project layout
+--------------
+The layout of the project is explained in more details in link:PROJECT.html[PROJECT]
+
+Architecture
+------------
