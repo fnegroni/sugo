@@ -1,0 +1,26 @@
+CC:=gcc
+CFLAGS:=-std=c99 -D_GNU_SOURCE -Wall -Wextra
+LDFLAGS:=
+
+.PHONY: default clean install uninstall sugo configure
+
+default: sugo
+
+configure:
+	$(PDIR)/configure
+
+clean:
+
+sugo: $(PDIR)/sugo.c $(PDIR)/sugo.h
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+install: sugo $(PDIR)/sugo.h
+	mkdir $(INSTALLDIR)/bin
+	mkdir $(INSTALLDIR)/include
+	cp sugo $(INSTALLDIR)/bin
+	cp $(PDIR)/sugo.h $(INSTALLDIR)/include
+
+uninstall:
+
+clean:
+	rm -f sugo

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+pdir=$(dirname $0)
+
+# Basic sanity check: are we invoked from the source directory?
+if [[ -z $pdir || $pdir == "." ]]
+then
+	echo "error: building in the source directory is not permitted"
+	exit 1
+fi
+
+template=$pdir/Makefile-template
+
+if [[ ! -f $template ]]
+then
+	echo "error: missing template Makefile $template"
+	exit 1
+fi
+
+echo "Creating Makefile..."
+if ! cat <<<"PDIR=$pdir" -  $template > Makefile
+then
+	echo "error: failed to create Makefile"
+	exit 1
+fi
+
+echo "Configuration complete. Just run make to build."
+
+exit 0

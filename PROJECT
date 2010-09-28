@@ -1,0 +1,20 @@
+Sugo project layout
+===================
+
+Detailed description of the layout of the project.
+
+A single Makefile
+-----------------
+A single Makefile situated in the root of the project directory structure serves the purpose of describing targets and dependencies for the entire source code base.
+
+The Makefile uses the GNU Make syntax.
+
+
+Documentation
+-------------
+In the root of the project's layout, README and PROJECT (this document) form the basis for the documentation.
+
+Each directory found within this project has a README file which must be read in order to familiarise one self with the contents.
+
+Each file is described in FILES so that by looking at FILES a quick reference can be established.
+
