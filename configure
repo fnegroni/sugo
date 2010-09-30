@@ -1,10 +1,31 @@
 #!/bin/bash
 
 pdir=$(dirname $0)
-installdir=/usr/local
 
-# Basic sanity check: are we invoked from the source directory?
 [[ -z $pdir ]] && pdir="."
+
+TEMP=$(getopt -o '' -l prefix: -n $0 -- $*)
+
+[[ $? != 0 ]] && exit 1
+
+eval set -- "$TEMP"
+
+while true
+do
+	case "$1" in
+		(--prefix)
+			prefix=$2
+			shift 2
+		;;
+		(--)
+			shift
+			break
+		;;
+	esac
+done
+
+prefix=${prefix:-/usr/local}
+echo Prefix: $prefix
 
 template=$pdir/Makefile-template
 
@@ -15,7 +36,9 @@ then
 fi
 
 echo "Creating Makefile..."
-if ! ( echo "PDIR=$pdir" >> Makefile && echo "INSTALLDIR=$installdir" >> Makefile && cat $template >> Makefile )
+if ! ( echo "PDIR:=$pdir" > Makefile \
+	&& echo "PREFIX:=$prefix" >> Makefile \
+	&& cat $template >> Makefile )
 then
 	echo "error: failed to create Makefile"
 	exit 1
