@@ -4,11 +4,7 @@ pdir=$(dirname $0)
 installdir=/usr/local
 
 # Basic sanity check: are we invoked from the source directory?
-if [[ -z $pdir || $pdir == "." ]]
-then
-	echo "error: building in the source directory is not permitted"
-	exit 1
-fi
+[[ -z $pdir ]] && pdir="."
 
 template=$pdir/Makefile-template
 
@@ -19,7 +15,7 @@ then
 fi
 
 echo "Creating Makefile..."
-if ! cat <<<"PDIR=$pdir" -  $template > Makefile
+if ! ( echo "PDIR=$pdir" >> Makefile && echo "INSTALLDIR=$installdir" >> Makefile && cat $template >> Makefile )
 then
 	echo "error: failed to create Makefile"
 	exit 1
