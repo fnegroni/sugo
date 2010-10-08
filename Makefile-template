@@ -6,15 +6,12 @@ LDFLAGS:=
 
 default: sugo
 
-configure:
-	$(PDIR)/configure
-
 sugo: $(PDIR)/sugo.c $(PDIR)/sugo.h
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
 install: sugo $(PDIR)/sugo.h
 	install -D sugo $(PREFIX)/bin/sugo
-	install -D $(PDIR)/sugo.h $(PREFIX)/include/sugo.h
+	install -m 644 -D $(PDIR)/sugo.h $(PREFIX)/include/sugo.h
 
 uninstall:
 	rm $(PREFIX)/bin/sugo
