@@ -2,12 +2,15 @@ CC:=gcc
 CFLAGS:=-std=c99 -D_GNU_SOURCE -Wall -Wextra
 LDFLAGS:=
 
-.PHONY: default clean install uninstall sugo configure
+.PHONY: default clean install uninstall
 
 default: sugo
 
 sugo: $(PDIR)/sugo.c $(PDIR)/sugo.h
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+clean:
+	rm -f sugo
 
 install: sugo $(PDIR)/sugo.h
 	install -D sugo $(PREFIX)/bin/sugo
@@ -17,5 +20,3 @@ uninstall:
 	rm $(PREFIX)/bin/sugo
 	rm $(PREFIX)/include/sugo.h
 
-clean:
-	rm -f sugo
