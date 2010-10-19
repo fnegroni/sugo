@@ -1,6 +1,10 @@
 TODO
 ====
 
-. Use glib for data structures to save on development time, while libcini is under initial development
+. Implement input/output redirection for each test
 
-. Complete documentation to ensure objective of Sugo is clearly stated
+. Ensure printing of status breakdown
+
+. Write manual page
+
+. Implement data structures using libcini itself

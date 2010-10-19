@@ -1,7 +1,7 @@
 /*
-libcini -- a collection of system application building blocks.
+sugo -- a system unit test framework.
 
-Copyright (C) 2010  Filippo Erik Negroni <f.e.negroni@gmail.com>
+Copyright (C) 2010 Filippo Erik Negroni <f.e.negroni@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/types.h> // wait,
 #include <sys/wait.h> // wait,
 
-static const int EXIT_ARGS = 1;
+const int EXIT_ARGS = 1;
 
 const char *argp_program_version = "0.1";
 const char *argp_program_bug_address = "<f.e.negroni@gmail.com>";
@@ -34,11 +34,14 @@ const char *const NONPOSITIONAL_ARGS_DOC = "TEST...";
 const char *const PROGRAM_DOC = "sugo -- a test framework for system routines.";
 
 unsigned int verbosity_level = 1;
-size_t count;
 
-struct test_list_item {
+struct test {
 	char *path;
 	pid_t pid;
+};
+
+struct test_list_item {
+	struct test test;
 	struct test_list_item *next;
 };
 
@@ -49,16 +52,16 @@ struct test_list {
 
 struct test_list tests;
 
-static struct test_list_item *
+struct test_list_item *
 new_test_list_item(const char *path)
 {
 	struct test_list_item *item = malloc(sizeof(struct test_list_item));
-	item->path = strdup(path);
-	item->pid = 0;
+	item->test.path = strdup(path);
+	item->test.pid = 0;
 	return item;
 }
 
-static void
+void
 append_test(const char *path)
 {
 	tests.last = tests.last->next = new_test_list_item(path);
@@ -66,12 +69,12 @@ append_test(const char *path)
 	++tests.count;
 }
 
-static struct test_list_item *
+struct test_list_item *
 pop_test(pid_t pid)
 {
 	struct test_list_item *i = tests.head.next, *p = &tests.head;
 	while (i != &tests.tail) {
-		if (pid == i->pid) {
+		if (pid == i->test.pid) {
 			p->next = i->next;
 			--tests.count;
 			break;
@@ -81,7 +84,7 @@ pop_test(pid_t pid)
 	return i;
 }
 
-static error_t
+error_t
 program_options_parser(int key, char *arg, struct argp_state *state)
 {
 	if ('v' == key) {
@@ -101,7 +104,7 @@ program_options_parser(int key, char *arg, struct argp_state *state)
 	return 0;
 }
 
-static void
+void
 init_tests(void)
 {
 	tests.count = 0;
@@ -110,7 +113,7 @@ init_tests(void)
 	tests.last = &tests.head;
 }
 
-static void
+void
 parse_args(int argc, char **argv)
 {
 	argp_err_exit_status = EXIT_ARGS;
@@ -137,23 +140,23 @@ parse_args(int argc, char **argv)
 	}
 }
 
-static void
+void
 run_tests(void)
 {
 	for (struct test_list_item *i = tests.head.next; i != &tests.tail; i = i->next) {
-		printf("Spawning test %s: ", i->path);
+		printf("Spawning test %s: ", i->test.path);
 		pid_t pid = fork();
 		if (pid == 0) {
 			/* Create new file descriptors for test: err and out, and input! */
-			execl(i->path, basename(i->path), (void *)0);
-			printf("Failed to exec %s\n", i->path);
+			execl(i->test.path, basename(i->test.path), (void *)0);
+			printf("Failed to exec %s\n", i->test.path);
 			abort();
 		} else if (-1 == pid) {
 			printf("fatal error: unable to fork\n");
 			break; // Proceed to wait for running tests
 		} else {
-			i->pid = pid;
-			printf("pid %d\n", i->pid);
+			i->test.pid = pid;
+			printf("pid %d\n", i->test.pid);
 		}
 	}
 
@@ -161,13 +164,13 @@ run_tests(void)
 		int status;
 		pid_t pid = wait(&status);
 
-		struct test_list_item *test = pop_test(pid);
-		if (test == &tests.tail) {
+		struct test_list_item *item = pop_test(pid);
+		if (item == &tests.tail) {
 			printf("Got notification for child not in list\n");
 			abort();
 		}
 		// Tell user all about the process termination: signal, exit status etc...
-		printf("test %s terminated: status %d\n", test->path, status);
+		printf("test %s terminated: status %d\n", item->test.path, status);
 	}
 
 	/* Compile statistics and print */

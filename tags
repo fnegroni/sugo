@@ -1,0 +1,32 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.7	//
+EXIT_ARGS	sugo.c	/^const int EXIT_ARGS = 1;$/;"	v
+NONPOSITIONAL_ARGS_DOC	sugo.c	/^const char *const NONPOSITIONAL_ARGS_DOC = "TEST...";$/;"	v
+PROGRAM_DOC	sugo.c	/^const char *const PROGRAM_DOC = "sugo -- a test framework for system routines.";$/;"	v
+append_test	sugo.c	/^append_test(const char *path)$/;"	f
+argp_err_exit_status	sugo.c	/^error_t argp_err_exit_status;$/;"	v
+argp_program_bug_address	sugo.c	/^const char *argp_program_bug_address = "<f.e.negroni@gmail.com>";$/;"	v
+argp_program_version	sugo.c	/^const char *argp_program_version = "0.1";$/;"	v
+count	sugo.c	/^	size_t count;$/;"	m	struct:test_list	file:
+head	sugo.c	/^	struct test_list_item head, tail, *last;$/;"	m	struct:test_list	typeref:struct:test_list::test_list_item	file:
+init_tests	sugo.c	/^init_tests(void)$/;"	f
+last	sugo.c	/^	struct test_list_item head, tail, *last;$/;"	m	struct:test_list	typeref:struct:test_list::	file:
+main	sugo.c	/^main(int argc, char **argv)$/;"	f
+new_test_list_item	sugo.c	/^new_test_list_item(const char *path)$/;"	f
+next	sugo.c	/^	struct test_list_item *next;$/;"	m	struct:test_list_item	typeref:struct:test_list_item::test_list_item	file:
+parse_args	sugo.c	/^parse_args(int argc, char **argv)$/;"	f
+path	sugo.c	/^	char *path;$/;"	m	struct:test	file:
+pid	sugo.c	/^	pid_t pid;$/;"	m	struct:test	file:
+pop_test	sugo.c	/^pop_test(pid_t pid)$/;"	f
+program_options_parser	sugo.c	/^program_options_parser(int key, char *arg, struct argp_state *state)$/;"	f
+run_tests	sugo.c	/^run_tests(void)$/;"	f
+tail	sugo.c	/^	struct test_list_item head, tail, *last;$/;"	m	struct:test_list	typeref:struct:test_list::	file:
+test	sugo.c	/^struct test {$/;"	s	file:
+test_list	sugo.c	/^struct test_list {$/;"	s	file:
+test_list_item	sugo.c	/^struct test_list_item {$/;"	s	file:
+tests	sugo.c	/^struct test_list tests;$/;"	v	typeref:struct:test_list
+verbosity_level	sugo.c	/^unsigned int verbosity_level = 1;$/;"	v
