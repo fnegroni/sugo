@@ -1,0 +1,6 @@
+TODO
+====
+
+. Use glib for data structures to save on development time, while libcini is under initial development
+
+. Complete documentation to ensure objective of Sugo is clearly stated

@@ -1,0 +1,37 @@
+FILES
+=====
+
+COPYING
+-------
+License
+
+Makefile-template
+-----------------
+Used by configure to generate a Makefile based on user preferences.
+
+PROJECT
+-------
+Describes project details such as file organisation, developer roles and repository location.
+
+README
+------
+
+README.asciidoc
+---------------
+A copy of README for github.com to render in HTML.
+
+TODO
+----
+Development task list.
+
+configure
+---------
+Bash script to generate a site specific Makefile.
+
+sugo.c
+------
+main() is here.
+
+sugo.h
+------
+Header for use by users of Sugo.

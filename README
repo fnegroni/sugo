@@ -9,10 +9,26 @@ It is not intented to be ported to any other operating system.
 
 Purpose
 -------
+`sugo` enables a developer to test a _unit_ of code.
+
+A _unit_ is defined as the minimum amount of code that must satisfy some requirements.
+
+For system programs, requirements are not simply limited to the correct execution of the code in terms of its inputs and outputs (functional test) but also, and probably especially, in terms of its side effects.
+
+`sugo` enables the testing of the side effects of a unit of code at the system level.
 
 Project layout
 --------------
-The layout of the project is explained in more details in link:PROJECT.html[PROJECT]
+The layout of the project is explained in more details in PROJECT.
 
 Architecture
 ------------
+Sugo is an application.
+
+Tests must be written as stand alone executables which Sugo will execute and monitor.
+
+Sugo can be configured to run tests in a particular execution environment, setting soft and hard limits, signal handlers and such, in order to ensure the test behaves as expected in a combination of those without need to write those restriction in the test itself.
+
+Sugo takes advantage of Linux's architecture to ensure the tests are treated as units of execution rather than units of code.
+
+
