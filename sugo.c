@@ -72,10 +72,11 @@ append_test(const char *path)
 struct test_list_item *
 pop_test(pid_t pid)
 {
-	struct test_list_item *i = tests.head.next, *p = &tests.head;
+	// FIXME: bug in popping pid out of sequence: head next?
+	struct test_list_item *i = tests.head.next;
 	while (i != &tests.tail) {
 		if (pid == i->test.pid) {
-			p->next = i->next;
+			tests.head.next = i->next;
 			--tests.count;
 			break;
 		}
