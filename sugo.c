@@ -47,10 +47,18 @@ struct test_list_item {
 
 struct test_list {
 	size_t count;
-	struct test_list_item head, tail, *last;
+	struct test_list_item head, *last;
 };
 
 struct test_list tests;
+
+void
+init_tests(void)
+{
+	tests.count = 0;
+	tests.head.next = 0;
+	tests.last = &tests.head;
+}
 
 struct test_list_item *
 new_test_list_item(const char *path)
@@ -65,24 +73,22 @@ void
 append_test(const char *path)
 {
 	tests.last = tests.last->next = new_test_list_item(path);
-	tests.last->next = &tests.tail;
+	tests.last->next = 0;
 	++tests.count;
 }
 
 struct test_list_item *
 pop_test(pid_t pid)
 {
-	// FIXME: bug in popping pid out of sequence: head next?
-	struct test_list_item *i = tests.head.next;
-	while (i != &tests.tail) {
+	struct test_list_item *p, *i;
+	for (p = tests.head, i = p->next; i; p = i, i = p->next) {
 		if (pid == i->test.pid) {
-			tests.head.next = i->next;
+			p->next = i->next;
 			--tests.count;
-			break;
+			return i;
 		}
-		i = i->next;
 	}
-	return i;
+	return 0;
 }
 
 error_t
@@ -103,15 +109,6 @@ program_options_parser(int key, char *arg, struct argp_state *state)
 	}
 
 	return 0;
-}
-
-void
-init_tests(void)
-{
-	tests.count = 0;
-	tests.head.next = &tests.tail;
-	tests.tail.next = &tests.tail;
-	tests.last = &tests.head;
 }
 
 void
@@ -144,7 +141,7 @@ parse_args(int argc, char **argv)
 void
 run_tests(void)
 {
-	for (struct test_list_item *i = tests.head.next; i != &tests.tail; i = i->next) {
+	for (struct test_list_item *i = tests.head.next; i; i = i->next) {
 		printf("Spawning test %s: ", i->test.path);
 		pid_t pid = fork();
 		if (pid == 0) {
@@ -165,7 +162,12 @@ run_tests(void)
 		int status;
 		pid_t pid = wait(&status);
 
-		struct test_list_item *item = pop_test(pid);
+		// Should use tests here
+		struct test_list_item *i = pop_test(pid);
+		// Every time we pop a test, we add it to another list, which records it as ended, so we can collect statistics.
+		// We should have two lists: the lists of running tests and the list of all tests
+		// Running tests list shrinks, total tests stay same.
+		// This way we can collect statistics.
 		if (item == &tests.tail) {
 			printf("Got notification for child not in list\n");
 			abort();
