@@ -1,6 +1,8 @@
 TODO
 ====
 
+. Implement test lists as described in inline comments in test_run()
+
 . Implement input/output redirection for each test
 
 . Ensure printing of status breakdown
