@@ -17,28 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h> // fprintf, 
-#include <stdlib.h> // abort, exit,
-#include <argp.h> // argp*,
-#include <string.h> // strdup, basename (GNU), 
-#include <unistd.h> // fork, pid_t,
-#include <sys/types.h> // wait,
-#include <sys/wait.h> // wait,
-
-const int EXIT_ARGS = 1;
-
-const char *argp_program_version = "0.1";
-const char *argp_program_bug_address = "<f.e.negroni@gmail.com>";
-error_t argp_err_exit_status;
-const char *const NONPOSITIONAL_ARGS_DOC = "TEST...";
-const char *const PROGRAM_DOC = "sugo -- a test framework for system routines.";
-
-unsigned int verbosity_level = 1;
-
-struct test {
-	char *path;
-	pid_t pid;
-};
+#include <string.h> // strdup,
+#include <unistd.h> // test.h,
+#include "test.h"
 
 struct tests_list_item {
 	struct test *test;
@@ -53,7 +34,6 @@ struct tests_list {
 struct tests_list_iterator {
 	struct test_list_item *i;
 };
-
 
 typedef tests_list tests_t;
 typedef tests_list_item tests_item_t;
