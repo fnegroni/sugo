@@ -1,45 +1,43 @@
 /*
-sugo -- a system unit test framework.
+Copyright 2010 Filippo Erik Negroni <f.e.negroni@gmail.com>
 
-Copyright (C) 2010 Filippo Erik Negroni <f.e.negroni@gmail.com>
+This file is part of Sugo.
 
-This program is free software: you can redistribute it and/or modify
+Sugo is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+Sugo is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h> // strdup,
-#include <unistd.h> // test.h,
 #include "test.h"
 
 struct tests_list_item {
 	struct test *test;
-	struct tests_item *next;
+	struct tests_list_item *next;
 };
 
 struct tests_list {
 	size_t count;
-	struct test_list_item head, *last;
+	struct tests_list_item head, *last;
 };
 
 struct tests_list_iterator {
-	struct test_list_item *i;
+	struct tests_list_item *i;
 };
 
 typedef tests_list tests_t;
 typedef tests_list_item tests_item_t;
 typedef tests_list_iterator tests_iterator_t;
 
-tests_t tests;
+extern tests_t tests;
 
 void
 init_tests(void)
