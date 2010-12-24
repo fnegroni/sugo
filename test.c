@@ -17,25 +17,17 @@ You should have received a copy of the GNU General Public License
 along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-include
-	test.h : struct test
-*/
+#include <unistd.h> // test.h,
+#include "test.h" // struct test,
+#include <stdlib.h> // malloc,
+#include <string.h> // strdup,
 
-struct tests_list_item {
-	struct test *test;
-	struct tests_list_item *next;
-};
+struct test *
+new_test(const char *path)
+{
+	struct test *test = malloc(sizeof(struct test));
+	test->path = strdup(path);
+	test->pid = 0;
+	return test;
+}
 
-struct tests_list {
-	size_t count;
-	struct tests_list_item head, *last;
-};
-
-struct tests_list_iterator {
-	struct tests_list_item *i;
-};
-
-extern tests_list tests;
-
-extern void init_tests(void);

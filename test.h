@@ -18,8 +18,8 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /*
-includes:
-	unistd.h for pid_t
+include
+	unistd.h : pid_t
 */
 
 struct test {
@@ -27,3 +27,4 @@ struct test {
 	pid_t pid;
 };
 
+extern struct test *new_test(const char *path);
