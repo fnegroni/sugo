@@ -55,10 +55,3 @@ pop_test(pid_t pid)
 	return 0;
 }
 
-struct test *
-get_test_from_tests_item(struct test_list_item *i)
-{
-	if (!i) return 0;
-	return i->test;
-}
-

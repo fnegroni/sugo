@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h> // fprintf, 
+#include <stdio.h> // *printf,
 #include <stdlib.h> // abort, exit,
 #include <argp.h> // argp*,
-#include <string.h> // strdup, basename (GNU), 
+#include <string.h> // basename (GNU), 
 #include <unistd.h> // fork, pid_t,
 #include <sys/types.h> // wait,
 #include <sys/wait.h> // wait,
+#include "test.h" // struct test,
+#include "tests.h" // tests, init_tests, struct tests_list_item,
 
 const int EXIT_ARGS = 1;
 
@@ -34,86 +36,6 @@ const char *const NONPOSITIONAL_ARGS_DOC = "TEST...";
 const char *const PROGRAM_DOC = "sugo -- a test framework for system routines.";
 
 unsigned int verbosity_level = 1;
-
-struct test {
-	char *path;
-	pid_t pid;
-};
-
-struct tests_list_item {
-	struct test *test;
-	struct tests_item *next;
-};
-
-struct tests_list {
-	size_t count;
-	struct test_list_item head, *last;
-};
-
-struct tests_list_iterator {
-	struct test_list_item *i;
-};
-
-
-typedef tests_list tests_t;
-typedef tests_list_item tests_item_t;
-typedef tests_list_iterator tests_iterator_t;
-
-tests_t tests;
-
-void
-init_tests(void)
-{
-	tests.count = 0;
-	tests.head.next = 0;
-	tests.last = &tests.head;
-}
-
-struct test *
-new_test(const char *path)
-{
-	struct test *test = malloc(sizeof(struct test));
-	test->path = strdup(path);
-	test->pid = 0;
-	return test;
-}
-
-struct test_list_item *
-new_test_list_item(const char *path)
-{
-	struct test_list_item *item = malloc(sizeof(struct test_list_item));
-	item->test = new_test(path);
-	return item;
-}
-
-void
-append_test(const char *path)
-{
-	tests.last = tests.last->next = new_test_list_item(path);
-	tests.last->next = 0;
-	++tests.count;
-}
-
-struct test *
-pop_test(pid_t pid)
-{
-	struct test_list_item *p, *i;
-	for (p = &tests.head, i = p->next; i; p = i, i = p->next) {
-		if (pid == i->test->pid) {
-			p->next = i->next;
-			--tests.count;
-			return i->test;
-		}
-	}
-	return 0;
-}
-
-struct test *
-get_test_from_tests_item(struct test_list_item *i)
-{
-	if (!i) return 0;
-	return i->test;
-}
 
 error_t
 program_options_parser(int key, char *arg, struct argp_state *state)
@@ -162,48 +84,30 @@ parse_args(int argc, char **argv)
 	}
 }
 
-struct tests_iterator {
-	struct test_list_item *p;
-};
-
-struct test *
-get_first_test(struct tests_iterator *it)
-{
-	it->p = tests.head;
-	return get_next_test(it);
-}
-
-struct test *
-get_next_test(struct tests_iterator *it)
-{
-	it->p = it->p->next;
-	return get_test(it->p);
-}
-
 void
-run_tests(void)
+spawn_tests(void)
 {
-	struct tests_iterator it;
-	for (struct test *i = get_first_test(&it); i; i = get_next_test(iterator)) {
-	}
-
 	for (struct test_list_item *i = tests.head.next; i; i = i->next) {
-		printf("Spawning test %s: ", i->test->path);
+		fprintf(stderr, "Spawning test %s: ", i->test->path);
 		pid_t pid = fork();
 		if (pid == 0) {
 			/* Create new file descriptors for test: err and out, and input! */
 			execl(i->test.path, basename(i->test.path), (void *)0);
-			printf("Failed to exec %s\n", i->test.path);
+			fprintf(stderr, "error: failed to exec %s\n", i->test.path);
 			abort();
 		} else if (-1 == pid) {
-			printf("fatal error: unable to fork\n");
-			break; // Proceed to wait for running tests
+			fprintf(stderr, "error: unable to fork new test.\n");
+			return;
 		} else {
 			i->test.pid = pid;
-			printf("pid %d\n", i->test.pid);
+			fprintf(stderr, "pid %d\n", i->test.pid);
 		}
 	}
+}
 
+void
+wait_for_tests(void)
+{
 	while (tests.count) {
 		int status;
 		pid_t pid = wait(&status);
@@ -221,6 +125,13 @@ run_tests(void)
 		// Tell user all about the process termination: signal, exit status etc...
 		printf("test %s terminated: status %d\n", i->test.path, status);
 	}
+}
+
+void
+process_tests(void)
+{
+	spawn_tests();
+	wait_for_tests();
 
 	/* Compile statistics and print */
 }
@@ -230,7 +141,7 @@ main(int argc, char **argv)
 {
 	init_tests();
 	parse_args(argc, argv);
-	run_tests();
+	process_tests();
 
 	return 0;
 }
