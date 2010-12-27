@@ -29,14 +29,16 @@ struct tests_queue_item {
 
 struct tests_queue {
 	size_t count;
-	struct tests_queue_item head, tail;
-	struct tests_queue_item *front, *back;
+	struct tests_queue_item ph;
+	struct tests_queue_item **front, **back;
 };
 
 struct tests_vector {
 	size_t count;
 	struct test **array;
 };
+
+extern struct tests_queue pending_tests;
 
 extern void init_tests_module(void);
 extern void add_pending_test(const char *path);

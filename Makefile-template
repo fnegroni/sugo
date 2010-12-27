@@ -17,7 +17,7 @@
 
 
 CC:=gcc
-CFLAGS:=-std=c99 -D_GNU_SOURCE -Wall -Wextra
+CFLAGS:=-std=c99 -D_GNU_SOURCE -O2 -DNDEBUG -Wall -Wextra
 LDFLAGS:=
 
 .PHONY: default clean install uninstall
@@ -28,16 +28,16 @@ sugo: sugo.o test.o tests.o
 	$(CC) -o $@ $(LDFLAGS) $^
 
 sugo.o: $(PDIR)/sugo.c $(PDIR)/sugo.h $(PDIR)/test.h $(PDIR)/tests.h
-	$(CC) -o $@ $(CFLAGS) $<
+	$(CC) -c -o $@ $(CFLAGS) $<
 
 test.o: $(PDIR)/test.c $(PDIR)/test.h
-	$(CC) -o $@ $(CFLAGS) $<
+	$(CC) -c -o $@ $(CFLAGS) $<
 
 tests.o: $(PDIR)/tests.c $(PDIR)/tests.h $(PDIR)/tests.h
-	$(CC) -o $@ $(CFLAGS) $<
+	$(CC) -c -o $@ $(CFLAGS) $<
 
 clean:
-	rm -f sugo
+	rm -f sugo sugo.o test.o tests.o
 
 install: sugo $(PDIR)/sugo.h
 	install -D sugo $(PREFIX)/bin/sugo

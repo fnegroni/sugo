@@ -29,12 +29,9 @@ void
 init_tests_module(void)
 {
 	pending_tests.count = 0;
-	pending_tests.head.test = 0;
-	pending_tests.tail.test = 0;
-	pending_tests.head.next = tail;
-	pending_tests.tail.next = tail;
-	pending_tests.front = &pending_tests.tail;
-	pending_tests.back = &pending_tests.head;
+	pending_tests.ph.test = 0;
+	pending_tests.ph.next = &pending_tests.ph;
+	pending_tests.front = pending_tests.back = &pending_tests.ph.next;
 	running_tests.count = 0;
 	running_tests.array = 0;
 }
@@ -42,17 +39,27 @@ init_tests_module(void)
 void
 add_pending_test(const char *path)
 {
-	pending_tests.back = pending_tests.back->next = malloc(sizeof pending_tests.head);
-	pending_tests.back->next = tail;
-	pending_tests.back->test = new_test(path);
-	++tests.count;
+	*pending_tests.back = malloc(sizeof **pending_tests.back);
+	(*pending_tests.back)->next = &pending_tests.ph;
+	(*pending_tests.back)->test = new_test(path);
+	pending_tests.back = &(*pending_tests.back)->next;
+	++pending_tests.count;
 }
 
 struct test *
 pop_pending_test(void)
 {
-	struct test *t = front->next->test;
-	front = front->next;
+	struct test *t = (*pending_tests.front)->test;
+	pending_tests.front = &(*pending_tests.front)->next;
 	return t;
 }
 
+void
+finished_adding_pending_tests(void)
+{
+}
+
+void
+insert_running_test(void)
+{
+}

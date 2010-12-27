@@ -23,7 +23,7 @@ include
 */
 
 struct test {
-	char *path;
+	const char *path;
 	pid_t pid;
 };
 

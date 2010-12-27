@@ -47,7 +47,7 @@ program_options_parser(int key, char *arg, struct argp_state *state)
 	} else if (ARGP_KEY_ARG == key) {
 		add_pending_test(arg);
 	} else if (ARGP_KEY_END == key) {
-		if (!pending_tests.count) {
+		if (0 == pending_tests.count) {
 			argp_error(state, "no tests specified.");
 		}
 	} else {
@@ -90,28 +90,21 @@ spawn_tests(void)
 	struct test *t;
 
 	while ((t = pop_pending_test())) {
-		// run test
-		// add test to running tests
-	}
-
-/*
-	for (struct test_list_item *i = tests.head.next; i; i = i->next) {
-		fprintf(stderr, "Spawning test %s: ", i->test->path);
+		fprintf(stderr, "Spawning test %s: ", t->path);
 		pid_t pid = fork();
 		if (pid == 0) {
 			/* Create new file descriptors for test: err and out, and input! */
-			execl(i->test.path, basename(i->test.path), (void *)0);
-			fprintf(stderr, "error: failed to exec %s\n", i->test.path);
+			execl(t->path, basename(t->path), (void *)0);
+			fprintf(stderr, "error: failed to exec %s\n", t->path);
 			abort();
 		} else if (-1 == pid) {
 			fprintf(stderr, "error: unable to fork new test.\n");
 			return;
 		} else {
-			i->test.pid = pid;
-			fprintf(stderr, "pid %d\n", i->test.pid);
+			t->pid = pid;
+			fprintf(stderr, "pid %d\n", t->pid);
 		}
 	}
-*/
 }
 
 void
