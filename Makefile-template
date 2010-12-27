@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 
-
 CC:=gcc
 CFLAGS:=-std=c99 -D_GNU_SOURCE -O2 -DNDEBUG -Wall -Wextra
 LDFLAGS:=
@@ -47,3 +46,5 @@ uninstall:
 	rm $(PREFIX)/bin/sugo
 	rm $(PREFIX)/include/sugo.h
 
+reconfigure:
+	$(PDIR)/configure $(CONFIG_OPTIONS)

@@ -21,6 +21,8 @@ pdir=$(dirname $0)
 
 [[ -z $pdir ]] && pdir="."
 
+config_options=$*
+
 TEMP=$(getopt -o '' -l prefix: -n $0 -- $*)
 
 [[ $? != 0 ]] && exit 1
@@ -55,6 +57,7 @@ fi
 echo "Creating Makefile..."
 if ! ( echo "PDIR:=$pdir" > Makefile \
 	&& echo "PREFIX:=$prefix" >> Makefile \
+	&& echo "CONFIG_OPTIONS:=$config_options" >> Makefile \
 	&& cat $template >> Makefile )
 then
 	echo "error: failed to create Makefile"
