@@ -19,7 +19,7 @@ CC:=gcc
 CFLAGS:=-std=c99 -D_GNU_SOURCE -O2 -DNDEBUG -Wall -Wextra
 LDFLAGS:=
 
-.PHONY: default clean install uninstall
+.PHONY: default clean install uninstall test runtests
 
 default: sugo
 
@@ -32,19 +32,29 @@ sugo.o: $(PDIR)/sugo.c $(PDIR)/sugo.h $(PDIR)/test.h $(PDIR)/tests.h
 test.o: $(PDIR)/test.c $(PDIR)/test.h
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-tests.o: $(PDIR)/tests.c $(PDIR)/tests.h $(PDIR)/tests.h
+tests.o: $(PDIR)/tests.c $(PDIR)/tests.h $(PDIR)/test.h
 	$(CC) -c -o $@ $(CFLAGS) $<
 
+test: sugo runtests
+
+TESTS:=test-tests-1
+
+runtests: $(TESTS)
+	sugo $^
+
+test-tests-%: $(PDIR)/test-tests-%.c tests.o test.o $(PDIR)/tests.h $(PDIR)/test.h $(PDIR)/sugo.h
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $< tests.o test.o
+
 clean:
-	rm -f sugo sugo.o test.o tests.o
+	-rm sugo sugo.o test.o tests.o $(TESTS)
 
 install: sugo $(PDIR)/sugo.h
 	install -D sugo $(PREFIX)/bin/sugo
 	install -m 644 -D $(PDIR)/sugo.h $(PREFIX)/include/sugo.h
 
 uninstall:
-	rm $(PREFIX)/bin/sugo
-	rm $(PREFIX)/include/sugo.h
+	-rm $(PREFIX)/bin/sugo
+	-rm $(PREFIX)/include/sugo.h
 
 reconfigure:
 	$(PDIR)/configure $(CONFIG_OPTIONS)

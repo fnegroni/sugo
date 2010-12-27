@@ -57,6 +57,8 @@ pop_pending_test(void)
 void
 finished_adding_pending_tests(void)
 {
+	// init running tests as array? or tree?
+	// what is the best data structure to have tess and look them up?
 }
 
 void
