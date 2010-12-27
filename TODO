@@ -1,7 +1,10 @@
 TODO
 ====
 
-. Implement test lists as described in inline comments in test_run()
+. Implement tests as three queues: one for pending, running and executed.
+.. The queues are independent and we use functions to make sure we encapsulate as much as possible away from the logic. That's what functions are there for.
+.. So a test exists in three queues and the operation to pass one test from a queue to another is encapsulated by a function too.
+.. Queues are like linked lists, exept with only two operations: push at end and pop at front. that's all.
 
 . Implement input/output redirection for each test
 

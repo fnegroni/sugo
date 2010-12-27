@@ -45,9 +45,9 @@ program_options_parser(int key, char *arg, struct argp_state *state)
 	} else if ('q' == key) {
 		verbosity_level = 0;
 	} else if (ARGP_KEY_ARG == key) {
-		append_test(arg);
+		add_pending_test(arg);
 	} else if (ARGP_KEY_END == key) {
-		if (!tests.count) {
+		if (!pending_tests.count) {
 			argp_error(state, "no tests specified.");
 		}
 	} else {
@@ -87,6 +87,14 @@ parse_args(int argc, char **argv)
 void
 spawn_tests(void)
 {
+	struct test *t;
+
+	while ((t = pop_pending_test())) {
+		// run test
+		// add test to running tests
+	}
+
+/*
 	for (struct test_list_item *i = tests.head.next; i; i = i->next) {
 		fprintf(stderr, "Spawning test %s: ", i->test->path);
 		pid_t pid = fork();
@@ -103,17 +111,18 @@ spawn_tests(void)
 			fprintf(stderr, "pid %d\n", i->test.pid);
 		}
 	}
+*/
 }
 
 void
 wait_for_tests(void)
 {
-	while (tests.count) {
+/*
+	while (running_tests.count) {
 		int status;
 		pid_t pid = wait(&status);
 
-		// Should use tests here
-		struct test_list_item *i = pop_test(pid);
+		struct test *t = pop_test(pid);
 		// Every time we pop a test, we add it to another list, which records it as ended, so we can collect statistics.
 		// We should have two lists: the lists of running tests and the list of all tests
 		// Running tests list shrinks, total tests stay same.
@@ -125,6 +134,7 @@ wait_for_tests(void)
 		// Tell user all about the process termination: signal, exit status etc...
 		printf("test %s terminated: status %d\n", i->test.path, status);
 	}
+*/
 }
 
 void
@@ -139,8 +149,9 @@ process_tests(void)
 int
 main(int argc, char **argv)
 {
-	init_tests();
+	init_tests_module();
 	parse_args(argc, argv);
+	finished_adding_pending_tests();
 	process_tests();
 
 	return 0;

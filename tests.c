@@ -19,39 +19,40 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <unistd.h> // test.h,
 #include "test.h" // tests.h,
-#include "tests.h" // all declarations for this module
+#include "tests.h"
 #include <stdlib.h> // malloc,
 
-tests_list tests;
+struct tests_queue pending_tests;
+struct tests_vector running_tests;
 
 void
-init_tests(void)
+init_tests_module(void)
 {
-	tests.count = 0;
-	tests.head.next = 0;
-	tests.last = &tests.head;
+	pending_tests.count = 0;
+	pending_tests.head.test = 0;
+	pending_tests.tail.test = 0;
+	pending_tests.head.next = tail;
+	pending_tests.tail.next = tail;
+	pending_tests.front = &pending_tests.tail;
+	pending_tests.back = &pending_tests.head;
+	running_tests.count = 0;
+	running_tests.array = 0;
 }
 
 void
-push_test(const char *path)
+add_pending_test(const char *path)
 {
-	tests.last = tests.last->next = malloc(sizeof(struct tests_list_item));
-	item->test = new_test(path);
-	tests.last->next = 0;
+	pending_tests.back = pending_tests.back->next = malloc(sizeof pending_tests.head);
+	pending_tests.back->next = tail;
+	pending_tests.back->test = new_test(path);
 	++tests.count;
 }
 
 struct test *
-pop_test(pid_t pid)
+pop_pending_test(void)
 {
-	struct test_list_item *p, *i;
-	for (p = &tests.head, i = p->next; i; p = i, i = p->next) {
-		if (pid == i->test->pid) {
-			p->next = i->next;
-			--tests.count;
-			return i->test;
-		}
-	}
-	return 0;
+	struct test *t = front->next->test;
+	front = front->next;
+	return t;
 }
 

@@ -24,8 +24,17 @@ LDFLAGS:=
 
 default: sugo
 
-sugo: $(PDIR)/sugo.c $(PDIR)/sugo.h
-	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+sugo: sugo.o test.o tests.o
+	$(CC) -o $@ $(LDFLAGS) $^
+
+sugo.o: $(PDIR)/sugo.c $(PDIR)/sugo.h $(PDIR)/test.h $(PDIR)/tests.h
+	$(CC) -o $@ $(CFLAGS) $<
+
+test.o: $(PDIR)/test.c $(PDIR)/test.h
+	$(CC) -o $@ $(CFLAGS) $<
+
+tests.o: $(PDIR)/tests.c $(PDIR)/tests.h $(PDIR)/tests.h
+	$(CC) -o $@ $(CFLAGS) $<
 
 clean:
 	rm -f sugo

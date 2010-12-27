@@ -22,20 +22,24 @@ include
 	test.h : struct test
 */
 
-struct tests_list_item {
+struct tests_queue_item {
 	struct test *test;
-	struct tests_list_item *next;
+	struct tests_queue_item *next;
 };
 
-struct tests_list {
+struct tests_queue {
 	size_t count;
-	struct tests_list_item head, *last;
+	struct tests_queue_item head, tail;
+	struct tests_queue_item *front, *back;
 };
 
-struct tests_list_iterator {
-	struct tests_list_item *i;
+struct tests_vector {
+	size_t count;
+	struct test **array;
 };
 
-extern tests_list tests;
-
-extern void init_tests(void);
+extern void init_tests_module(void);
+extern void add_pending_test(const char *path);
+extern struct test *pop_pending_test(void);
+extern void finished_adding_pending_tests(void);
+extern void insert_running_test(void);

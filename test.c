@@ -18,15 +18,14 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <unistd.h> // test.h,
-#include "test.h" // struct test,
 #include <stdlib.h> // malloc,
-#include <string.h> // strdup,
+#include "test.h"
 
 struct test *
 new_test(const char *path)
 {
 	struct test *test = malloc(sizeof(struct test));
-	test->path = strdup(path);
+	test->path = path;
 	test->pid = 0;
 	return test;
 }
