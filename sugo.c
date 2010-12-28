@@ -102,32 +102,21 @@ spawn_tests(void)
 			return;
 		} else {
 			t->pid = pid;
+			add_running_test(t);
 			fprintf(stderr, "pid %d\n", t->pid);
 		}
 	}
+	finished_adding_running_tests();
 }
 
 void
 wait_for_tests(void)
 {
-/*
 	while (running_tests.count) {
 		int status;
 		pid_t pid = wait(&status);
-
-		struct test *t = pop_test(pid);
-		// Every time we pop a test, we add it to another list, which records it as ended, so we can collect statistics.
-		// We should have two lists: the lists of running tests and the list of all tests
-		// Running tests list shrinks, total tests stay same.
-		// This way we can collect statistics.
-		if (!i) {
-			printf("Got notification for child not in list\n");
-			abort();
-		}
-		// Tell user all about the process termination: signal, exit status etc...
-		printf("test %s terminated: status %d\n", i->test.path, status);
+		test_completed(pid, status);
 	}
-*/
 }
 
 void
@@ -135,8 +124,7 @@ process_tests(void)
 {
 	spawn_tests();
 	wait_for_tests();
-
-	/* Compile statistics and print */
+	//print_stats();
 }
 
 int

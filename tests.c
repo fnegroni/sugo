@@ -21,9 +21,13 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 #include "test.h" // tests.h,
 #include "tests.h"
 #include <stdlib.h> // malloc,
+#include <assert.h> // assert,
+#include <string.h> // memmove,
+#include <stdio.h> // fprintf,
 
 struct tests_queue pending_tests;
 struct tests_vector running_tests;
+struct tests_vector completed_tests;
 
 void
 init_tests_module(void)
@@ -34,6 +38,8 @@ init_tests_module(void)
 	pending_tests.front = pending_tests.back = &pending_tests.ph.next;
 	running_tests.count = 0;
 	running_tests.array = 0;
+	completed_tests.count = 0;
+	completed_tests.array = 0;
 }
 
 void
@@ -51,17 +57,49 @@ pop_pending_test(void)
 {
 	struct test *t = (*pending_tests.front)->test;
 	pending_tests.front = &(*pending_tests.front)->next;
+	--pending_tests.count;
 	return t;
 }
 
 void
 finished_adding_pending_tests(void)
 {
-	// init running tests as array? or tree?
-	// what is the best data structure to have tess and look them up?
+	size_t count = pending_tests.count;
+	running_tests.array = malloc((count+1) * sizeof *running_tests.array);
+	running_tests.array[count] = 0;
 }
 
 void
-insert_running_test(void)
+add_running_test(struct test *t)
 {
+	running_tests.array[running_tests.count++] = t;
+}
+
+void
+finished_adding_running_tests(void)
+{
+	size_t count = running_tests.count;
+	completed_tests.array = malloc((count+1) * sizeof *completed_tests.array);
+	completed_tests.array[count] = 0;
+}
+
+void
+test_completed(pid_t pid, int status)
+{
+	struct test **t;
+	assert(running_tests.count > 0);
+	for (t = running_tests.array; *t && (*t)->pid != pid; ++t) {
+		;
+	}
+	assert(*t);
+
+	(*t)->status = status;
+
+	fprintf(stderr, "debug: test %s terminated, wait status: %u, exited normally: %u, exit status %u\n", (*t)->path, (*t)->status, WIFEXITED((*t)->status), WEXITSTATUS((*t)->status));
+
+	size_t block_size = running_tests.count - (t - running_tests.array);
+	memmove(t, t+1, block_size);
+	--running_tests.count;
+
+	completed_tests.array[completed_tests.count++] = *t;
 }

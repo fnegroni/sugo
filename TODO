@@ -1,16 +1,13 @@
 TODO
 ====
 
-. finish unit test for tests.o
+. Ensure printing of status breakdown
 
-. Implement tests as three queues: one for pending, running and executed.
-.. The queues are independent and we use functions to make sure we encapsulate as much as possible away from the logic. That's what functions are there for.
-.. So a test exists in three queues and the operation to pass one test from a queue to another is encapsulated by a function too.
-.. Queues are like linked lists, exept with only two operations: push at end and pop at front. that's all.
+. finish unit tests for tests.o
+.. need to extensively test sugo's internal
+.. self testing is also useful
 
 . Implement input/output redirection for each test
-
-. Ensure printing of status breakdown
 
 . Write manual page
 

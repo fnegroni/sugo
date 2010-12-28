@@ -39,9 +39,13 @@ struct tests_vector {
 };
 
 extern struct tests_queue pending_tests;
+extern struct tests_vector running_tests;
+extern struct tests_vector completed_tests;
 
 extern void init_tests_module(void);
 extern void add_pending_test(const char *path);
 extern struct test *pop_pending_test(void);
 extern void finished_adding_pending_tests(void);
-extern void insert_running_test(void);
+extern void add_running_test(struct test *t);
+extern void finished_adding_running_tests(void);
+extern void test_completed(pid_t pid, int status);

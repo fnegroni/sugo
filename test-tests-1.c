@@ -31,5 +31,5 @@ main(void)
 	TEST(1, 0 == pop_pending_test())
 	TEST(2, 0 == pop_pending_test())
 	TEST(3, 0 == pop_pending_test())
-	return 0;
+	return 1;
 }

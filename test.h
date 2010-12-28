@@ -25,6 +25,7 @@ include
 struct test {
 	const char *path;
 	pid_t pid;
+	int status;
 };
 
 extern struct test *new_test(const char *path);
