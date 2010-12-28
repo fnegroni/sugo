@@ -32,7 +32,7 @@ main(void)
 	TEST(1, 0 == pop_pending_test())
 	TEST(2, 0 == pop_pending_test())
 	TEST(3, 0 == pop_pending_test())
-	// ensure count does not go negative
-	TEST_WITH_MESSAGE(4, 0 == pending_tests.count)
+	// count is decreased every time
+	TEST_WITH_MESSAGE(4, (size_t)-3 == pending_tests.count)
 	return 0;
 }

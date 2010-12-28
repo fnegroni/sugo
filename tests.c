@@ -57,7 +57,7 @@ pop_pending_test(void)
 {
 	struct test *t = (*pending_tests.front)->test;
 	pending_tests.front = &(*pending_tests.front)->next;
-	pending_tests.count && (pending_tests.count -= 1);
+	--pending_tests.count;
 	return t;
 }
 
