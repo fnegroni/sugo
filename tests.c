@@ -38,8 +38,10 @@ init_tests_module(void)
 	pending_tests.front = pending_tests.back = &pending_tests.ph.next;
 	running_tests.count = 0;
 	running_tests.array = 0;
+	running_tests.front = running_tests.array;
 	completed_tests.count = 0;
 	completed_tests.array = 0;
+	completed_tests.front = completed_tests.array;
 }
 
 void
@@ -65,8 +67,8 @@ void
 finished_adding_pending_tests(void)
 {
 	size_t count = pending_tests.count;
-	running_tests.array = malloc((count+1) * sizeof *running_tests.array);
-	running_tests.array[count] = 0;
+	running_tests.array = malloc(count * sizeof *running_tests.array);
+	running_tests.front = running_tests.array;
 }
 
 void
@@ -79,8 +81,8 @@ void
 all_tests_are_running(void)
 {
 	size_t count = running_tests.count;
-	completed_tests.array = malloc((count+1) * sizeof *completed_tests.array);
-	completed_tests.array[count] = 0;
+	completed_tests.array = malloc(count * sizeof *completed_tests.array);
+	completed_tests.front = completed_tests.array;
 }
 
 void
@@ -88,18 +90,25 @@ test_completed(pid_t pid, int status)
 {
 	struct test **t;
 	assert(running_tests.count > 0);
-	for (t = running_tests.array; *t && (*t)->pid != pid; ++t) {
+	for (t = running_tests.front; (*t)->pid != pid; ++t) {
 		;
 	}
-	assert(*t);
 
 	(*t)->status = status;
 
 	fprintf(stderr, "debug: test %s terminated, wait status: %u, exited normally: %u, exit status %u\n", (*t)->path, (*t)->status, WIFEXITED((*t)->status), WEXITSTATUS((*t)->status));
 
-	size_t block_size = running_tests.count - (t - running_tests.array);
-	memmove(t, t+1, block_size);
+	/*
+	Optimization: advance front of array if first element must be removed. Saves having to memmove rest of array.
+	It also matches the average case scenario where most tests run so quickly, they will terminate in the same order they were started.
+	*/
 	--running_tests.count;
+	if (t == running_tests.front) {
+		++running_tests.front;
+	} else {
+		size_t block_size = (running_tests.count * sizeof *running_tests.front) - (t - running_tests.front);
+		memmove(t, t+1, block_size);
+	}
 
 	completed_tests.array[completed_tests.count++] = *t;
 }

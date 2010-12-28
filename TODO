@@ -1,13 +1,15 @@
 TODO
 ====
 
-. Ensure printing of status breakdown
+. Print statistics at the end: time too?
+
+. Implement input/output redirection for each test
 
 . finish unit tests for tests.o
 .. need to extensively test sugo's internal
+... running tests and completed tests
 .. self testing is also useful
-
-. Implement input/output redirection for each test
+... test sugo itself: input and output
 
 . Write manual page
 

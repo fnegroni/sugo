@@ -20,7 +20,7 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h> // test.h
 #include "test.h" // tests.h
 #include "tests.h"
-#include <stdlib.h> // sugo.h
+#include <stdlib.h> // sugo.h, malloc,
 #include <stdio.h> // sugo.h
 #include "sugo.h"
 #include <string.h> // strcmp,
@@ -28,13 +28,16 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 int
 main(void)
 {
-	// verify simple push pop from queue
+	// verify repeadatly push and pop
 	init_tests_module();
-	add_pending_test("A");
-	TEST(1, pending_tests.front == &pending_tests.ph.next)
-	TEST(2, pending_tests.back == &pending_tests.ph.next->next)
-	TEST(3, 0 == strcmp(next_pending_test()->path, "A"));
-	TEST(4, pending_tests.front == &pending_tests.ph.next->next)
-	TEST(5, pending_tests.back == &pending_tests.ph.next->next)
+	for (int i = 1; i < 100; ++i) {
+		char *path = malloc(2);
+		path[0] = i;
+		path[1] = '\0';
+		add_pending_test(path);
+	}
+	for (int i = 1; i < 100; ++i) {
+		TEST(i, next_pending_test()->path[0] == i);
+	}
 	return 0;
 }

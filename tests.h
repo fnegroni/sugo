@@ -36,6 +36,7 @@ struct tests_queue {
 struct tests_vector {
 	size_t count;
 	struct test **array;
+	struct test **front;
 };
 
 extern struct tests_queue pending_tests;
