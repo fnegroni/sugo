@@ -89,7 +89,7 @@ spawn_tests(void)
 {
 	struct test *t;
 
-	while ((t = pop_pending_test())) {
+	while ((t = next_pending_test())) {
 		fprintf(stderr, "Spawning test %s: ", t->path);
 		pid_t pid = fork();
 		if (pid == 0) {

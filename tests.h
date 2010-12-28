@@ -44,7 +44,7 @@ extern struct tests_vector completed_tests;
 
 extern void init_tests_module(void);
 extern void add_pending_test(const char *path);
-extern struct test *pop_pending_test(void);
+extern struct test *next_pending_test(void);
 extern void all_tests_are_running(void);
 extern void test_is_running(struct test *t);
 extern void finished_adding_running_tests(void);

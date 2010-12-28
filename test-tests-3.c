@@ -23,16 +23,18 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h> // sugo.h
 #include <stdio.h> // sugo.h
 #include "sugo.h"
+#include <string.h> // strcmp,
 
 int
 main(void)
 {
-	// repeadetly pop tests from empty queue
+	// verify simple push pop from queue
 	init_tests_module();
-	TEST(1, 0 == next_pending_test())
-	TEST(2, 0 == next_pending_test())
-	TEST(3, 0 == next_pending_test())
-	// count is decreased every time
-	TEST_WITH_MESSAGE(4, (size_t)-3 == pending_tests.count)
+	add_pending_test("A");
+	TEST(1, pending_tests.front == &pending_tests.ph.next)
+	TEST(2, pending_tests.back == &pending_tests.ph.next->next)
+	TEST(3, 0 == strcmp(next_pending_test()->path, "A"));
+	TEST(4, pending_tests.front == &pending_tests.ph.next)
+	TEST(5, pending_tests.back == &pending_tests.ph.next)
 	return 0;
 }

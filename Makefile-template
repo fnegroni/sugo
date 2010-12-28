@@ -37,7 +37,7 @@ tests.o: $(PDIR)/tests.c $(PDIR)/tests.h $(PDIR)/test.h
 
 test: sugo runtests
 
-TESTS:=test-tests-1
+TESTS:=test-tests-1 test-tests-2 test-tests-3
 
 runtests: $(TESTS)
 	sugo $^

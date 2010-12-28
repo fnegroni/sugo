@@ -53,7 +53,7 @@ add_pending_test(const char *path)
 }
 
 struct test *
-pop_pending_test(void)
+next_pending_test(void)
 {
 	struct test *t = (*pending_tests.front)->test;
 	pending_tests.front = &(*pending_tests.front)->next;
