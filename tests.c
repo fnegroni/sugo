@@ -57,7 +57,7 @@ pop_pending_test(void)
 {
 	struct test *t = (*pending_tests.front)->test;
 	pending_tests.front = &(*pending_tests.front)->next;
-	--pending_tests.count;
+	pending_tests.count && (pending_tests.count -= 1);
 	return t;
 }
 
@@ -70,13 +70,13 @@ finished_adding_pending_tests(void)
 }
 
 void
-add_running_test(struct test *t)
+test_is_running(struct test *t)
 {
 	running_tests.array[running_tests.count++] = t;
 }
 
 void
-finished_adding_running_tests(void)
+all_tests_are_running(void)
 {
 	size_t count = running_tests.count;
 	completed_tests.array = malloc((count+1) * sizeof *completed_tests.array);

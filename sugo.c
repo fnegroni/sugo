@@ -102,11 +102,11 @@ spawn_tests(void)
 			return;
 		} else {
 			t->pid = pid;
-			add_running_test(t);
+			test_is_running(t);
 			fprintf(stderr, "pid %d\n", t->pid);
 		}
 	}
-	finished_adding_running_tests();
+	all_tests_are_running();
 }
 
 void

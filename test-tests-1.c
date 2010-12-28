@@ -21,6 +21,7 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 #include "test.h" // tests.h
 #include "tests.h"
 #include <stdlib.h> // sugo.h
+#include <stdio.h> // sugo.h
 #include "sugo.h"
 
 int
@@ -31,5 +32,7 @@ main(void)
 	TEST(1, 0 == pop_pending_test())
 	TEST(2, 0 == pop_pending_test())
 	TEST(3, 0 == pop_pending_test())
-	return 1;
+	// ensure count does not go negative
+	TEST_WITH_MESSAGE(4, 0 == pending_tests.count)
+	return 0;
 }

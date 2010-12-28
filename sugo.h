@@ -18,8 +18,11 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /*
- * uses exit from stdlib.h
- */
+include
+	stdlib.h : exit,
+	stdio.h : fputs, stderr,
+*/
 
 #define TEST(code, cond) if (!(cond)) exit(code);
+#define TEST_WITH_MESSAGE(code, cond) if (!(cond)) { fputs(#cond "\n", stderr); exit(code); }
 
