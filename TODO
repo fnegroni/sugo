@@ -1,9 +1,20 @@
 TODO
 ====
 
+. DONE Implement input/output redirection for each test
+.. test for errors
+
 . Print statistics at the end: time too?
 
-. Implement input/output redirection for each test
+. Issue with fork/exec:
+.. We don't check if the file to exec actually exists and is executable before we fork.
+	This means we never really get pending tests not being executed: if a test is not executed, the process aborts and writes why to stderr.
+	If we can't fork, we move onto execution and leave the pending ones behind. But that's if we couldn't fork.
+	The problem is that if we mispelt some tests, we only know because of an abort.
+	I guess time will tell and we'll have to deal with it.
+	As far as I know, it's only relevant once in use and we print stats, so I think we should concentrate on that instead.
+	For now, if a test is not found we leave it to the exec to figure that out.
+	But in the future we might need to do it ourselves.
 
 . finish unit tests for tests.o
 .. need to extensively test sugo's internal
@@ -11,6 +22,9 @@ TODO
 .. self testing is also useful
 ... test sugo itself: input and output
 
+. Write tutorial online: how to use
+
 . Write manual page
 
-. Implement data structures using libcini itself
+. Write architecture document: how to hack
+

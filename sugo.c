@@ -21,11 +21,13 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h> // abort, exit,
 #include <argp.h> // argp*,
 #include <string.h> // basename (GNU), 
-#include <unistd.h> // fork, pid_t,
-#include <sys/types.h> // wait,
+#include <unistd.h> // fork, pid_t, close,
+#include <sys/types.h> // wait, open
 #include <sys/wait.h> // wait,
 #include "test.h" // struct test,
-#include "tests.h" // tests, init_tests, struct tests_list_item,
+#include "tests.h" // tests, init_tests_module, pending_tests, running_tests, all_tests_are_running, finished_adding_pending_tests, test_completed, test_is_running, next_pending_test,
+#include <sys/stat.h> // open,
+#include <fcntl.h> // open,
 
 const int EXIT_ARGS = 1;
 
@@ -94,6 +96,18 @@ spawn_tests(void)
 		pid_t pid = fork();
 		if (pid == 0) {
 			/* Create new file descriptors for test: err and out, and input! */
+			close(0); close(1); close(2);
+			size_t pathlen = strlen(t->path);
+			char path[pathlen+4+1];
+			char *pathext = path+pathlen;
+			strcpy(path, t->path);
+			strcpy(pathext, ".in");
+			open(path, O_RDONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+			strcpy(pathext, ".out");
+			open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+			strcpy(pathext, ".err");
+			open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+			/* */
 			execl(t->path, basename(t->path), (void *)0);
 			fprintf(stderr, "error: failed to exec %s\n", t->path);
 			abort();

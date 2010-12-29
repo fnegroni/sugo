@@ -46,7 +46,8 @@ test-tests-%: $(PDIR)/test-tests-%.c tests.o test.o $(PDIR)/tests.h $(PDIR)/test
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $< tests.o test.o
 
 clean:
-	-rm sugo sugo.o test.o tests.o $(TESTS)
+	-rm sugo sugo.o test.o tests.o
+	-for i in $(TESTS); do rm $$i $$i.in $$i.out $$i.err; done
 
 install: sugo $(PDIR)/sugo.h
 	install -D sugo $(PREFIX)/bin/sugo
