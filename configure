@@ -23,7 +23,7 @@ pdir=$(dirname $0)
 
 config_options=$*
 
-TEMP=$(getopt -o '' -l prefix: -n $0 -- $*)
+TEMP=$(getopt -o '' -l prefix: -l variant: -n $0 -- $*)
 
 [[ $? != 0 ]] && exit 1
 
@@ -36,6 +36,10 @@ do
 			prefix=$2
 			shift 2
 		;;
+		(--variant)
+			variant=$2
+			shift 2
+		;;
 		(--)
 			shift
 			break
@@ -45,6 +49,9 @@ done
 
 prefix=${prefix:-/usr/local}
 echo Prefix: $prefix
+
+variant=${variant:-debug}
+echo Variant: $variant
 
 template=$pdir/Makefile-template
 
@@ -57,6 +64,7 @@ fi
 echo "Creating Makefile..."
 if ! ( echo "PDIR:=$pdir" > Makefile \
 	&& echo "PREFIX:=$prefix" >> Makefile \
+	&& echo "variant:=$variant" >> Makefile \
 	&& echo "CONFIG_OPTIONS:=$config_options" >> Makefile \
 	&& cat $template >> Makefile )
 then

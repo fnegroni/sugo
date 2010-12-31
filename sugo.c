@@ -18,72 +18,31 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdio.h> // *printf,
-#include <stdlib.h> // abort, exit,
-#include <argp.h> // argp*,
+#include <stdlib.h> // abort,
 #include <string.h> // basename (GNU), 
 #include <unistd.h> // fork, pid_t, close,
 #include <sys/types.h> // wait, open
 #include <sys/wait.h> // wait,
-#include "test.h" // struct test,
-#include "tests.h" // tests, init_tests_module, pending_tests, running_tests, all_tests_are_running, finished_adding_pending_tests, test_completed, test_is_running, next_pending_test,
+#include "test.h" // tests.h, struct test,
+#include "tests.h" // tests, init_tests_module, running_tests, all_tests_are_running, finished_adding_pending_tests, test_completed, test_is_running, next_pending_test,
 #include <sys/stat.h> // open,
 #include <fcntl.h> // open,
-
-const int EXIT_ARGS = 1;
-
-const char *argp_program_version = "0.1";
-const char *argp_program_bug_address = "<f.e.negroni@gmail.com>";
-error_t argp_err_exit_status;
-const char *const NONPOSITIONAL_ARGS_DOC = "TEST...";
-const char *const PROGRAM_DOC = "sugo -- a test framework for system routines.";
-
-unsigned int verbosity_level = 1;
-
-error_t
-program_options_parser(int key, char *arg, struct argp_state *state)
-{
-	if ('v' == key) {
-		++verbosity_level;
-	} else if ('q' == key) {
-		verbosity_level = 0;
-	} else if (ARGP_KEY_ARG == key) {
-		add_pending_test(arg);
-	} else if (ARGP_KEY_END == key) {
-		if (0 == pending_tests.count) {
-			argp_error(state, "no tests specified.");
-		}
-	} else {
-		return ARGP_ERR_UNKNOWN;
-	}
-
-	return 0;
-}
+#include "options.h" // verbosity_level,
 
 void
-parse_args(int argc, char **argv)
+redirect_std_fds(const char *testpath)
 {
-	argp_err_exit_status = EXIT_ARGS;
-
-	struct argp_option program_options[] = {
-		{.name="verbose", .key='v', .arg=0, .flags=0, .doc="Make logging more verbose."},
-		{.name="quiet", .key='q', .arg=0, .flags=0, .doc="Turn logging off completely."},
-		{.name=0}
-	};
-
-	struct argp program_parser = {
-		.options = program_options,
-		.parser = program_options_parser,
-		.args_doc = NONPOSITIONAL_ARGS_DOC,
-		.doc = PROGRAM_DOC
-	};
-
-	error_t err = argp_parse(&program_parser, argc, argv, 0, 0, 0);
-	if (err) {
-		if (EINVAL == err) {
-			exit(EXIT_ARGS);
-		}
-		abort();
-	}
+	close(0); close(1); close(2);
+	size_t testpathlen = strlen(testpath);
+	char path[testpathlen+4+1];
+	char *pathext = path+testpathlen;
+	strcpy(path, testpath);
+	strcpy(pathext, ".in");
+	open(path, O_RDONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	strcpy(pathext, ".out");
+	open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	strcpy(pathext, ".err");
+	open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 }
 
 void
@@ -92,22 +51,10 @@ spawn_tests(void)
 	struct test *t;
 
 	while ((t = next_pending_test())) {
-		fprintf(stderr, "Spawning test %s: ", t->path);
+		if (verbosity_level) fprintf(stderr, "Spawning test %s: ", t->path);
 		pid_t pid = fork();
 		if (pid == 0) {
-			/* Create new file descriptors for test: err and out, and input! */
-			close(0); close(1); close(2);
-			size_t pathlen = strlen(t->path);
-			char path[pathlen+4+1];
-			char *pathext = path+pathlen;
-			strcpy(path, t->path);
-			strcpy(pathext, ".in");
-			open(path, O_RDONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-			strcpy(pathext, ".out");
-			open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-			strcpy(pathext, ".err");
-			open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-			/* */
+			redirect_std_fds(t->path);
 			execl(t->path, basename(t->path), (void *)0);
 			fprintf(stderr, "error: failed to exec %s\n", t->path);
 			abort();

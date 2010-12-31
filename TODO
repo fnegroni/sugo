@@ -6,6 +6,8 @@ TODO
 
 . Print statistics at the end: time too?
 
+. Have optimised CFLAGS: how do we do that? using a variable in the makefile set by a target? Is that possible?
+
 . Issue with fork/exec:
 .. We don't check if the file to exec actually exists and is executable before we fork.
 	This means we never really get pending tests not being executed: if a test is not executed, the process aborts and writes why to stderr.
