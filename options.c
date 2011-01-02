@@ -22,6 +22,7 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h> // abort, exit,
 #include "test.h" // tests.h,
 #include "tests.h" // add_pending_test, pending_tests,
+#include "exitcodes.h" // EXIT_ARGS,
 
 unsigned int verbosity_level = 1;
 

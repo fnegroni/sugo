@@ -24,48 +24,44 @@ else
 endif
 LDFLAGS :=
 
-.PHONY: default clean install uninstall test runtests
+.PHONY : default clean install uninstall test runtests
 
-default: sugo
+default : sugo
 
-sugo: sugo.o test.o tests.o options.o
+objects = sugo.o test.o tests.o options.o exitcodes.o
+
+%.o : $(PDIR)/%.c $(PDIR)/%.h
+	$(CC) -c -o $@ $(CFLAGS) $<
+
+sugo : $(objects)
 	$(CC) -o $@ $(LDFLAGS) $^
 
-sugo.o: $(PDIR)/sugo.c $(PDIR)/sugo.h $(PDIR)/test.h $(PDIR)/tests.h
-	$(CC) -c -o $@ $(CFLAGS) $<
+sugo.o tests.o options.o : $(PDIR)/test.h $(PDIR)/tests.h
+options.o : $(PDIR)/exitcodes.h
 
-test.o: $(PDIR)/test.c $(PDIR)/test.h
-	$(CC) -c -o $@ $(CFLAGS) $<
-
-tests.o: $(PDIR)/tests.c $(PDIR)/tests.h $(PDIR)/test.h
-	$(CC) -c -o $@ $(CFLAGS) $<
-
-options.o: $(PDIR)/options.c $(PDIR)/options.h $(PDIR)/test.h $(PDIR)/tests.h
-	$(CC) -c -o $@ $(CFLAGS) $<
-
-test: sugo runtests
+test : sugo runtests
 
 tests := test-tests-1 test-tests-2 test-tests-3 test-tests-4
 
-runtests: $(tests)
+runtests : $(tests)
 	sugo $^
 
-test-tests-%: $(PDIR)/test-tests-%.c tests.o test.o $(PDIR)/tests.h $(PDIR)/test.h $(PDIR)/sugo.h
+test-tests-% : $(PDIR)/test-tests-%.c tests.o test.o $(PDIR)/tests.h $(PDIR)/test.h $(PDIR)/sugo.h
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $< tests.o test.o
 
-clean:
+clean :
 	@echo Removing output...
-	@rm -f sugo sugo.o test.o tests.o
+	@rm -f sugo $(objects)
 	@echo Remvoing tests...
 	@for i in $(tests); do rm -f $$i $$i.in $$i.out $$i.err; done
 
-install: sugo $(PDIR)/sugo.h
+install : sugo $(PDIR)/sugo.h
 	install -D sugo $(PREFIX)/bin/sugo
 	install -m 644 -D $(PDIR)/sugo.h $(PREFIX)/include/sugo.h
 
-uninstall:
+uninstall :
 	-rm $(PREFIX)/bin/sugo
 	-rm $(PREFIX)/include/sugo.h
 
-reconfigure:
+reconfigure :
 	$(PDIR)/configure $(CONFIG_OPTIONS) $(ADD_CONFIG_OPTIONS)
