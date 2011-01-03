@@ -1,10 +1,47 @@
 TODO
 ====
 
+. Do test-sugo-1.c
+
 . DONE Implement input/output redirection for each test
 .. test for errors
+... errno
+.. open input without following symbolic links
+... if file does not exist, create for now
+... in future, it will be specified using a configuration file, so we will take care of that then.
+.. open output only if does not exit: creat()?
+... NO symlink
+.. All inputs and outputs should be placed in directory with random name so multiple runs do not share outputs (nor inputs...)
+... combination of PID and random:
+... print out its location
 
 . Print statistics at the end: time too?
+
+. Signals? DUring test, try delay and see if signal propagates
+
+. Process handling: process groups? Signals?
+.. priority?
+
+. Improve test to allow configuration file to check test
+.. and set umask
+.. and file names
+.. and limits
+.. and other things too...
+.. arguments
+.. env variables
+
+. What about a communications channel with sugo? Somewhere a test can use to communicate with sugo other than signals.
+.. Maybe can be used to provide some kind of support for tests, without affecting the test's process space: a file descriptor is not a library to be linked against or anything, and can work out better... maybe?
+
+. File notification of activity to monitor processes...
+
+. Determine if test is stuck with timer
+
+. Printout on stderr/stdout: stdout is user friendly for now
+.. in future, use porcelain to make output interpretable by script
+
+. Debug output: for optimising Sugo itself:
+.. was an out of sequence process terminated? how many of the total?
 
 . implement system programs and all about networking, synchronizing threads etc...
 .. as tests for sugo
@@ -12,6 +49,8 @@ TODO
 . study structured computer organization
 .. to the point of learning assembler basics
 .. Then learn assembler i386
+
+. Generic data structures from CINI
 
 . Issue with fork/exec:
 .. We don't check if the file to exec actually exists and is executable before we fork.

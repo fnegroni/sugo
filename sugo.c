@@ -19,8 +19,8 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h> // *printf,
 #include <stdlib.h> // abort,
-#include <string.h> // basename (GNU), 
-#include <unistd.h> // fork, pid_t, close,
+#include <string.h> // basename (GNU), strerror,
+#include <unistd.h> // fork, pid_t, close, dup2,
 #include <sys/types.h> // wait, open
 #include <sys/wait.h> // wait,
 #include "test.h" // tests.h, struct test,
@@ -28,11 +28,27 @@ along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/stat.h> // open,
 #include <fcntl.h> // open,
 #include "options.h" // verbosity_level,
+#include <errno.h> // errno,
 
-void
+static void
 redirect_std_fds(const char *testpath)
 {
-	close(0); close(1); close(2);
+	// TODO: any errors printed by the child process go to fd 3.
+	// fd 3 is a dup() of Sugo's main process fd 2.
+	// This should also be set close on exec to not get it inherited by the child process
+	// Any errors before the exec will be sent there.
+	// In order to ensure Sugo's stderr is shared correctly, we use a mutex: any writing to stderr is therefore serialized and synchronized.
+	// Could be implemented using lockf() or fcntl...
+	// Are locks inherited over forks? if not, problem? No, it's exactly what we want: Sugo's main process gets the lock, and the children have to acquire it. They can wait.
+	// Normal output from Sugo goes to stdout anyway, stderr is reserved for error conditions, which should be very few and far in between.
+	// FIXME: does close on exec take place if the image cannot be found? to test...
+
+	if (close(1) ) {
+		// This message may never appear.
+		fprintf(stderr, "Error closing standard file descriptors 0, 1 and 2: %s\n", strerror(errno));
+		abort();
+	}
+	write(3, "Error closing standard file descriptors 0, 1 and 2\n", 20);
 	size_t testpathlen = strlen(testpath);
 	char path[testpathlen+4+1];
 	char *pathext = path+testpathlen;
@@ -45,7 +61,7 @@ redirect_std_fds(const char *testpath)
 	open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 }
 
-void
+static void
 spawn_tests(void)
 {
 	struct test *t;
@@ -70,7 +86,7 @@ spawn_tests(void)
 	all_tests_are_running();
 }
 
-void
+static void
 wait_for_tests(void)
 {
 	while (running_tests.count) {
@@ -80,7 +96,7 @@ wait_for_tests(void)
 	}
 }
 
-void
+static void
 process_tests(void)
 {
 	spawn_tests();
@@ -88,9 +104,27 @@ process_tests(void)
 	//print_stats();
 }
 
+static void
+setup_file_descriptors(void)
+{
+	if (-1 == dup2(2, 3)) {
+		fprintf(stderr, "Error dup'ing file descriptor 2 (stderr) into 3: %s\n", strerror(errno));
+		abort();
+	}
+	if (-1 == fcntl(3, F_SETFD, FD_CLOEXEC)) {
+		fprintf(stderr, "Error setting close on exec flag on file descriptor 3: %s\n", strerror(errno));
+		abort();
+	}
+	if (close(0)) {
+		fprintf(stderr, "Error closing file descriptor 0 (stdin): %s\n", strerror(errno));
+		abort();
+	}
+}
+
 int
 main(int argc, char **argv)
 {
+	setup_file_descriptors();
 	init_tests_module();
 	parse_args(argc, argv);
 	finished_adding_pending_tests();
