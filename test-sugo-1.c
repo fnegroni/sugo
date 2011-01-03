@@ -17,23 +17,17 @@ You should have received a copy of the GNU General Public License
 along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <unistd.h> // test.h
-#include "test.h" // tests.h
-#include "tests.h"
+#include <unistd.h> // write,
 #include <stdlib.h> // sugo.h
 #include <stdio.h> // sugo.h
 #include "sugo.h"
+#include <errno.h> // errno
 
 int
 main(void)
 {
 	// Test writing to fd 3 which should be close-on-exec
-	// repeadetly pop tests from empty queue
-	init_tests_module();
-	TEST(1, 0 == next_pending_test())
-	TEST(2, 0 == next_pending_test())
-	TEST(3, 0 == next_pending_test())
-	// count is decreased every time
-	TEST_WITH_MESSAGE(4, (size_t)-3 == pending_tests.count)
+	TEST(1, -1 == write(3, "", 0))
+	TEST(2, EBADF == errno)
 	return 0;
 }

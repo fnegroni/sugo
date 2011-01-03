@@ -41,13 +41,16 @@ options.o : $(PDIR)/exitcodes.h
 
 test : sugo runtests
 
-tests := test-tests-1 test-tests-2 test-tests-3 test-tests-4
+tests := test-tests-1 test-tests-2 test-tests-3 test-tests-4 test-sugo-1
 
 runtests : $(tests)
 	sugo $^
 
 test-tests-% : $(PDIR)/test-tests-%.c tests.o test.o $(PDIR)/tests.h $(PDIR)/test.h $(PDIR)/sugo.h
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $< tests.o test.o
+
+test-sugo-% : $(PDIR)/test-sugo-%.c $(PDIR)/sugo.h
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
 clean :
 	@echo Removing output...

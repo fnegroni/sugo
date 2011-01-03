@@ -43,12 +43,11 @@ redirect_std_fds(const char *testpath)
 	// Normal output from Sugo goes to stdout anyway, stderr is reserved for error conditions, which should be very few and far in between.
 	// FIXME: does close on exec take place if the image cannot be found? to test...
 
-	if (close(1) ) {
-		// This message may never appear.
-		fprintf(stderr, "Error closing standard file descriptors 0, 1 and 2: %s\n", strerror(errno));
+	if (close(1) || close(2)) {
+		print_on_sugo_stderr();
+		//fprintf(stderr, "Error closing standard file descriptors 0, 1 and 2: %s\n", strerror(errno));
 		abort();
 	}
-	write(3, "Error closing standard file descriptors 0, 1 and 2\n", 20);
 	size_t testpathlen = strlen(testpath);
 	char path[testpathlen+4+1];
 	char *pathext = path+testpathlen;
