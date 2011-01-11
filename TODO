@@ -1,6 +1,8 @@
 TODO
 ====
 
+. Split test executer from overall test manager
+
 . Do test-sugo-1.c
 
 . DONE Implement input/output redirection for each test
