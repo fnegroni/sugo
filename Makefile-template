@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Sugo.  If not, see <http://www.gnu.org/licenses/>.
 
+# To regenerate this file, run make reconfigure
+# To change configuration options, populate the variable ADD_CONFIG_OPTIONS with the options you wish to add or override.
+
 CC := gcc
 CFLAGS := -std=c99 -D_GNU_SOURCE
 ifeq ($(variant),release)
@@ -26,42 +29,7 @@ LDFLAGS :=
 
 .PHONY : default clean install uninstall test runtests
 
-default : sugo
-
-objects = sugo.o test.o tests.o options.o exitcodes.o
-
-%.o : $(PDIR)/%.c $(PDIR)/%.h
-	$(CC) -c -o $@ $(CFLAGS) $<
-
-sugo : $(objects)
-	$(CC) -o $@ $(LDFLAGS) $^
-
-sugo.o tests.o options.o : $(PDIR)/test.h $(PDIR)/tests.h
-options.o : $(PDIR)/exitcodes.h
-
-test : sugo runtests
-
-tests := test-tests-1 test-tests-2 test-tests-3 test-tests-4
-
-runtests : $(tests)
-	sugo $^
-
-test-tests-% : $(PDIR)/test-tests-%.c tests.o test.o $(PDIR)/tests.h $(PDIR)/test.h $(PDIR)/sugo.h
-	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $< tests.o test.o
-
-clean :
-	@echo Removing output...
-	@rm -f sugo $(objects)
-	@echo Remvoing tests...
-	@for i in $(tests); do rm -f $$i $$i.in $$i.out $$i.err; done
-
-install : sugo $(PDIR)/sugo.h
-	install -D sugo $(PREFIX)/bin/sugo
-	install -m 644 -D $(PDIR)/sugo.h $(PREFIX)/include/sugo.h
-
-uninstall :
-	-rm $(PREFIX)/bin/sugo
-	-rm $(PREFIX)/include/sugo.h
+default : sugo-init
 
 reconfigure :
 	$(PDIR)/configure $(CONFIG_OPTIONS) $(ADD_CONFIG_OPTIONS)
