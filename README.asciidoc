@@ -1,40 +1,11 @@
-Sugo - a system software test framework
+Sugo -- add Good Taste to your unit tests
 =========================================
 
-Sugo is a framework to aid the development of unit and behaviour tests for system software libraries and applications.
+Sugo is a unit test framework, with a difference: it is not a framework for writing unit tests, but for executing them.
 
-It is written in C99 for Linux 2.6 and above.
+Sugo treats your unit tests as black boxes: units of execution. A unit test can therefore be written in any language (including shell scripting or assembler), in any coding style, and above all, without its integrity being compromised by the unit test framework itself.
 
-It is not intented to be ported to any other operating system.
+Waht Sugo adds to your unit tests is a robust mechanism to validate their execution and guarantee their results (what Linus Torvalds would call Good Taste TM). And that's not surprising, because Sugo means sauce in Italian!
 
-Purpose
--------
-Sugo enables a developer to test a _unit of execution_.
-
-A _unit of execution_ is defined as the minimum amount of executable code that must satisfy some requirements.
-
-For system programs, requirements are not simply limited to the correct execution of the code in terms of its inputs and outputs (functional test) but also, and probably especially, in terms of its side effects (behaviour).
-
-Sugo enables the testing of the side effects of a _unit of execution_ at the system level.
-
-Project layout
---------------
-The layout of the project is explained in more details in PROJECT.
-
-Architecture
-------------
-Sugo is an application and a framework.
-
-The application executes the tests written by the user.
-
-The framework is a series of macros which enable code injection, and configurable parameters that feed Sugo with metadata about the tests.
-
-Tests must be written as stand alone executables which Sugo will execute and monitor.
-
-Sugo can be configured to run tests in a particular execution environment, setting soft and hard limits, signal handlers and such, in order to ensure the test behaves as expected in a combination of those without need to write those restriction in the test itself.
-
-Sugo takes advantage of Linux's architecture to ensure the tests are treated as units of execution rather than units of code.
-
-For a more detailed analysis of Sugo's code, please refer to CODE.
-
+If your spaghetti code needs some taste, add Sugo to it!
 
