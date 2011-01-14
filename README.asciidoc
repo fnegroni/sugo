@@ -1,11 +1,12 @@
-Add Good Taste to your unit tests with Sugo
--------------------------------------------
+*Add Good Taste to your unit tests, with Sugo*
 
-Sugo is a unit test framework, with a difference: it is not a framework for writing unit tests, but for executing them.
+Sugo is a unit test framework, with a twist in its recipe: it won't get in your way.
 
 Sugo treats your unit tests as black boxes: units of execution. A unit test can therefore be written in any language (including shell scripting or assembler), in any coding style, and above all, without its integrity being compromised by the unit test framework itself.
 
-Waht Sugo adds to your unit tests is a robust mechanism to validate their execution and guarantee their results (what Linus Torvalds would call Good Taste TM). And that's not surprising, because Sugo means sauce in Italian!
+What Sugo adds to your unit tests is a robust mechanism to validate their execution and guarantee their results (what Linus Torvalds would call Good Taste TM).
+
+And that's not surprising, because _sugo_ means _sauce_ in Italian!
 
 If your spaghetti code needs some taste, add Sugo to it!
 
