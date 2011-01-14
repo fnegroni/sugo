@@ -1,5 +1,5 @@
-Sugo -- add Good Taste to your unit tests
-=========================================
+Add Good Taste to your unit tests with Sugo
+-------------------------------------------
 
 Sugo is a unit test framework, with a difference: it is not a framework for writing unit tests, but for executing them.
 
